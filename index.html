@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUMENRUST — Game Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #050a12;
+    --bg-card: #0a1525;
+    --bg-card2: #0d1c30;
+    --border: #1a3050;
+    --accent: #1e6fff;
+    --accent2: #00d4ff;
+    --accent3: #7b2fff;
+    --text: #c8dff5;
+    --text-dim: #5a7a9a;
+    --green: #00e676;
+    --discount: #ff4d4d;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg-deep);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse 60% 40% at 80% 20%, rgba(30,111,255,.07) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 50% at 10% 80%, rgba(123,47,255,.06) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 50% 50%, rgba(0,212,255,.03) 0%, transparent 70%);
+    pointer-events:none; z-index:0;
+  }
+  /* NAV */
+  nav {
+    position:sticky; top:0; z-index:100;
+    background:rgba(5,10,18,.94);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+    padding:0 32px;
+    display:flex; align-items:center; height:58px; gap:0;
+  }
+  .logo {
+    font-family:'Orbitron',sans-serif; font-weight:900; font-size:18px;
+    letter-spacing:2px; color:#fff;
+    display:flex; align-items:center; gap:10px;
+    margin-right:36px; white-space:nowrap;
+  }
+  .logo-hex {
+    width:30px; height:30px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+    animation:pulse-logo 3s ease-in-out infinite;
+    flex-shrink:0;
+  }
+  @keyframes pulse-logo {
+    0%,100%{box-shadow:0 0 10px rgba(30,111,255,.5);}
+    50%{box-shadow:0 0 22px rgba(0,212,255,.8),0 0 44px rgba(30,111,255,.3);}
+  }
+  .logo span{color:var(--accent2);}
+  .nav-links{display:flex;gap:4px;flex:1;align-items:center;}
+  .nav-links a{
+    color:var(--text-dim); text-decoration:none; font-size:13px; font-weight:600;
+    letter-spacing:1px; text-transform:uppercase; padding:6px 14px;
+    border-radius:4px; transition:all .2s; white-space:nowrap;
+  }
+  .nav-links a:hover{color:var(--accent2);background:rgba(30,111,255,.08);}
+  .nav-right{margin-left:auto;}
+  .btn-login{
+    background:linear-gradient(135deg,var(--accent),var(--accent3));
+    color:#fff; border:none; padding:8px 24px;
+    font-family:'Orbitron',sans-serif; font-size:11px; font-weight:700;
+    letter-spacing:2px; border-radius:4px; cursor:pointer; transition:all .2s;
+    text-transform:uppercase;
+  }
+  .btn-login:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(30,111,255,.5);}
+  /* LAYOUT */
+  .layout{display:flex;min-height:calc(100vh - 58px);position:relative;z-index:1;}
+  /* SIDEBAR */
+  aside{
+    width:245px; flex-shrink:0; padding:20px 16px;
+    display:flex; flex-direction:column; gap:14px;
+    border-right:1px solid var(--border);
+  }
+  .s-card{
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:8px; padding:14px; position:relative; overflow:hidden;
+  }
+  .s-card::before{
+    content:''; position:absolute; top:0;left:0;right:0; height:2px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+  }
+  .s-card h4{
+    font-family:'Orbitron',sans-serif; font-size:10px; font-weight:700;
+    letter-spacing:1.5px; color:var(--accent2); text-transform:uppercase;
+    margin-bottom:7px; display:flex; align-items:center; gap:6px;
+  }
+  .s-card p{font-size:13px;color:var(--text-dim);line-height:1.5;}
+  .s-tag{
+    display:block; margin-top:10px; padding:6px 12px;
+    background:rgba(30,111,255,.12); border:1px solid rgba(30,111,255,.3);
+    border-radius:4px; font-family:'Orbitron',sans-serif;
+    font-size:10px; letter-spacing:1px; color:var(--accent2);
+    cursor:pointer; transition:all .2s; text-align:center;
+  }
+  .s-tag:hover{background:rgba(30,111,255,.25);box-shadow:0 0 12px rgba(30,111,255,.3);}
+  /* Server */
+  .srv-card{background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:14px;}
+  .srv-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s ease-in-out infinite;flex-shrink:0;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.4;}}
+  .srv-name{font-family:'Orbitron',sans-serif;font-size:9px;font-weight:700;color:#fff;letter-spacing:.8px;line-height:1.4;}
+  .srv-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+  .sbadge{padding:2px 8px;background:rgba(123,47,255,.15);border:1px solid rgba(123,47,255,.3);border-radius:3px;font-size:11px;color:#b794f4;font-weight:700;}
+  .srv-info{font-size:12px;color:var(--text-dim);}
+  .connect-box{margin-top:9px;padding:7px 10px;background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:4px;font-family:'Orbitron',sans-serif;font-size:9px;color:var(--text-dim);letter-spacing:.8px;word-break:break-all;}
+  /* Bonuses */
+  .b-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+  .b-row:last-child{border-bottom:none;}
+  .b-amt{font-size:13px;color:var(--text-dim);font-weight:600;}
+  .b-badge{padding:3px 10px;border-radius:3px;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:.8px;}
+  .g1{background:linear-gradient(90deg,#00c853,#00e676);color:#000;}
+  .g2{background:linear-gradient(90deg,#00b44a,#00d466);color:#000;}
+  .g3{background:linear-gradient(90deg,#009a3a,#00b84d);color:#000;}
+  .g4{background:linear-gradient(90deg,#007a28,#009a38);color:#fff;}
+  /* Discord */
+  .discord-card{background:linear-gradient(135deg,rgba(88,101,242,.15),rgba(30,111,255,.08));border:1px solid rgba(88,101,242,.3);}
+  .disc-btn{margin-top:11px;width:100%;padding:9px;background:linear-gradient(135deg,#5865f2,#7289da);border:none;border-radius:5px;color:#fff;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;cursor:pointer;transition:all .2s;}
+  .disc-btn:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(88,101,242,.5);}
+  .disc-members{display:flex;align-items:center;gap:6px;margin-top:7px;font-size:12px;color:var(--text-dim);}
+  /* MAIN */
+  main{flex:1;padding:22px 26px;min-width:0;}
+  .filter-bar{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px;}
+  .ftab{
+    padding:7px 15px; border-radius:5px; border:1px solid var(--border);
+    background:var(--bg-card); color:var(--text-dim);
+    font-family:'Rajdhani',sans-serif; font-size:13px; font-weight:600;
+    letter-spacing:.5px; cursor:pointer; transition:all .2s; white-space:nowrap;
+  }
+  .ftab:hover{border-color:var(--accent);color:var(--accent2);}
+  .ftab.active{background:linear-gradient(135deg,rgba(30,111,255,.2),rgba(0,212,255,.1));border-color:var(--accent);color:var(--accent2);box-shadow:0 0 12px rgba(30,111,255,.2);}
+  .search-wrap{position:relative;margin-bottom:22px;}
+  .search-input{
+    width:100%; padding:11px 18px 11px 44px;
+    background:var(--bg-card); border:1px solid var(--border); border-radius:6px;
+    color:var(--text); font-family:'Rajdhani',sans-serif; font-size:15px;
+    letter-spacing:.5px; outline:none; transition:all .2s;
+  }
+  .search-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,111,255,.12);}
+  .search-input::placeholder{color:var(--text-dim);}
+  .s-icon{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:16px;pointer-events:none;}
+  .sec-label{
+    font-family:'Orbitron',sans-serif; font-size:10px; font-weight:700;
+    letter-spacing:2px; color:var(--text-dim); text-transform:uppercase;
+    margin-bottom:14px; display:flex; align-items:center; gap:10px;
+  }
+  .sec-label::after{content:'';flex:1;height:1px;background:var(--border);}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(162px,1fr));gap:13px;}
+  .icard{
+    background:var(--bg-card); border:1px solid var(--border);
+    border-radius:8px; overflow:hidden; cursor:pointer;
+    transition:all .25s; position:relative;
+    animation:fadeUp .4s ease both;
+  }
+  .icard:hover{border-color:rgba(30,111,255,.5);transform:translateY(-3px);box-shadow:0 8px 30px rgba(30,111,255,.15);}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+  .img-wrap{
+    width:100%; aspect-ratio:1;
+    background:linear-gradient(135deg,#0a1828,#0d2040);
+    display:flex;align-items:center;justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .img-wrap::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(30,111,255,.12),transparent 70%);opacity:0;transition:opacity .25s;}
+  .icard:hover .img-wrap::after{opacity:1;}
+  .i-icon{font-size:54px;transition:transform .25s;user-select:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6));}
+  .icard:hover .i-icon{transform:scale(1.08);}
+  .disc-badge{
+    position:absolute;top:8px;right:8px;
+    background:var(--discount); color:#fff;
+    font-family:'Orbitron',sans-serif; font-size:9px; font-weight:700;
+    padding:2px 6px; border-radius:3px; z-index:2;
+    box-shadow:0 0 10px rgba(255,77,77,.4);
+  }
+  .buy-overlay{
+    position:absolute;bottom:0;left:0;right:0;
+    background:linear-gradient(transparent,rgba(5,10,18,.95));
+    padding:18px 10px 10px;
+    display:flex;justify-content:center;
+    opacity:0;transition:all .22s;transform:translateY(4px);
+  }
+  .icard:hover .buy-overlay{opacity:1;transform:translateY(0);}
+  .buy-btn{
+    background:linear-gradient(135deg,var(--accent),var(--accent3));
+    border:none; color:#fff;
+    font-family:'Orbitron',sans-serif; font-size:9px; font-weight:700;
+    letter-spacing:1.5px; padding:6px 0; border-radius:3px; cursor:pointer;
+    width:100%; text-transform:uppercase; transition:all .2s;
+  }
+  .buy-btn:hover{box-shadow:0 4px 14px rgba(30,111,255,.5);}
+  .iinfo{padding:10px 11px 12px;}
+  .iname{font-size:14px;font-weight:700;color:#e0f0ff;letter-spacing:.3px;margin-bottom:6px;line-height:1.2;}
+  .iprice{display:flex;align-items:center;gap:7px;}
+  .pold{font-size:12px;color:var(--text-dim);text-decoration:line-through;}
+  .pnew{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:var(--accent2);}
+  .ponly{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:#fff;}
+  ::-webkit-scrollbar{width:5px;}
+  ::-webkit-scrollbar-track{background:var(--bg-deep);}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+  ::-webkit-scrollbar-thumb:hover{background:var(--accent);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">
+    <div class="logo-hex"></div>
+    LUMEN<span>RUST</span>
+  </div>
+  <div class="nav-links">
+    <a href="#">Shop</a>
+    <a href="#">Support</a>
+    <a href="#">Rules</a>
+    <a href="https://discord.gg/3HUaQWmE6" target="_blank">Discord</a>
+    <a href="https://t.me/LUMENRUST" target="_blank">Telegram</a>
+    <a href="#">Tournament Rules</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-login">Sign In</button>
+  </div>
+</nav>
+
+<div class="layout">
+  <aside>
+
+    <div class="s-card">
+      <h4>⚠ Payment Issues?</h4>
+      <p>Contact us on Telegram for fast support</p>
+      <div class="s-tag" onclick="window.open('https://t.me/LUMENRUST','_blank')">@LUMENRUST</div>
+    </div>
+
+    <div class="s-card">
+      <h4>🎁 Nick Bonus</h4>
+      <p>Add to your nickname & get a welcome bonus!</p>
+      <div class="s-tag">#lumenrust</div>
+    </div>
+
+    <div class="srv-card">
+      <div class="srv-head">
+        <div class="dot"></div>
+        <div class="srv-name">LUMENRUST X2 | Semi-Classic | NoLimit</div>
+      </div>
+      <div class="srv-badges">
+        <span class="sbadge">X2</span>
+        <span class="sbadge">NOLIMIT</span>
+      </div>
+      <div class="srv-info">Wipes every Friday &amp; Monday</div>
+      <div class="connect-box">connect 46.174.50.248:20620</div>
+    </div>
+
+    <div class="s-card">
+      <h4>💎 Deposit Bonuses</h4>
+      <div class="b-row"><span class="b-amt">1500 RUB</span><span class="b-badge g1">+25% BONUS</span></div>
+      <div class="b-row"><span class="b-amt">500 RUB</span><span class="b-badge g2">+20% BONUS</span></div>
+      <div class="b-row"><span class="b-amt">300 RUB</span><span class="b-badge g3">+10% BONUS</span></div>
+      <div class="b-row"><span class="b-amt">150 RUB</span><span class="b-badge g4">+5% BONUS</span></div>
+    </div>
+
+    <div class="s-card discord-card">
+      <h4>🎮 Join Discord!</h4>
+      <p>Find teammates, live chat &amp; in-game help</p>
+      <div class="disc-members">👥 400+ Members</div>
+      <button class="disc-btn" onclick="window.open('https://discord.gg/3HUaQWmE6','_blank')">JOIN SERVER</button>
+    </div>
+
+  </aside>
+
+  <main>
+    <div class="filter-bar">
+      <button class="ftab active" onclick="filterItems('all',this)">All</button>
+      <button class="ftab" onclick="filterItems('privileges',this)">Privileges</button>
+      <button class="ftab" onclick="filterItems('resources',this)">Resources</button>
+      <button class="ftab" onclick="filterItems('ammo',this)">Ammunition</button>
+      <button class="ftab" onclick="filterItems('clothing',this)">Clothing</button>
+      <button class="ftab" onclick="filterItems('construction',this)">Construction</button>
+      <button class="ftab" onclick="filterItems('medical',this)">Medical</button>
+      <button class="ftab" onclick="filterItems('weapons',this)">Weapons</button>
+      <button class="ftab" onclick="filterItems('kits',this)">Kits</button>
+    </div>
+
+    <div class="search-wrap">
+      <span class="s-icon">🔍</span>
+      <input class="search-input" type="text" placeholder="Search items..." id="searchInput" oninput="handleSearch(this.value)">
+    </div>
+
+    <div class="sec-label">Featured Items</div>
+    <div class="grid" id="itemGrid"></div>
+  </main>
+</div>
+
+<script>
+const ITEMS = [
+  {id:1,  name:'STONE Kit',          cat:'kits',         price:400, old:470,  icon:'🪨', disc:15},
+  {id:2,  name:'FAUNA Kit',          cat:'kits',         price:350, old:411,  icon:'🦌', disc:15},
+  {id:3,  name:'EARTH Kit',          cat:'kits',         price:300, old:352,  icon:'🌍', disc:15},
+  {id:4,  name:'Farmer Kit',         cat:'kits',         price:90,  old:100,  icon:'🚜', disc:10},
+  {id:5,  name:'SkinPack',           cat:'clothing',     price:45,  old:50,   icon:'🎨', disc:10},
+  {id:6,  name:'Blueprint Set',      cat:'construction', price:125, old:147,  icon:'📐', disc:15},
+  {id:7,  name:'Unbreakable Tool',   cat:'resources',    price:35,  old:null, icon:'⛏️', disc:0},
+  {id:8,  name:'Metabolism 7 Days',  cat:'medical',      price:55,  old:null, icon:'⚡', disc:0},
+  {id:9,  name:'Card Set',           cat:'resources',    price:25,  old:null, icon:'🃏', disc:0},
+  {id:10, name:'Tea [Choice]',       cat:'medical',      price:10,  old:null, icon:'🍵', disc:0},
+  {id:11, name:'Work Bench Lv.3',    cat:'construction', price:60,  old:null, icon:'🏗️', disc:0},
+  {id:12, name:'Work Bench Lv.2',    cat:'construction', price:50,  old:null, icon:'🔧', disc:0},
+  {id:13, name:'Blueprint Frags',    cat:'construction', price:10,  old:null, icon:'📋', disc:0},
+  {id:14, name:'Blueprint Sheet',    cat:'construction', price:15,  old:null, icon:'📄', disc:0},
+  {id:15, name:'M249',               cat:'weapons',      price:125, old:null, icon:'🔫', disc:0},
+  {id:16, name:'Assault Rifle',      cat:'weapons',      price:100, old:null, icon:'🪖', disc:0},
+  {id:17, name:'MP5A4',              cat:'weapons',      price:75,  old:null, icon:'💥', disc:0},
+  {id:18, name:'LR-300 Assault',     cat:'weapons',      price:75,  old:null, icon:'🎯', disc:0},
+  {id:19, name:'Semi-Auto Rifle',    cat:'weapons',      price:55,  old:null, icon:'⚔️', disc:0},
+  {id:20, name:'Bolt Action Rifle',  cat:'weapons',      price:75,  old:null, icon:'🏹', disc:0},
+  {id:21, name:'Rocket Launcher',    cat:'weapons',      price:55,  old:null, icon:'🚀', disc:0},
+  {id:22, name:'L96 Rifle',          cat:'weapons',      price:150, old:null, icon:'🔭', disc:0},
+  {id:23, name:'M39 Rifle',          cat:'weapons',      price:55,  old:null, icon:'🪃', disc:0},
+  {id:24, name:'HML MG',             cat:'weapons',      price:65,  old:null, icon:'💣', disc:0},
+  {id:25, name:'Outfit',             cat:'clothing',     price:20,  old:null, icon:'👘', disc:0},
+  {id:26, name:'Bandage Pack',       cat:'medical',      price:15,  old:null, icon:'🩹', disc:0},
+  {id:27, name:'Syringe Kit',        cat:'medical',      price:20,  old:null, icon:'💉', disc:0},
+  {id:28, name:'Sulfur x1000',       cat:'resources',    price:30,  old:null, icon:'🟡', disc:0},
+  {id:29, name:'Metal Frags x5000',  cat:'resources',    price:40,  old:null, icon:'🔩', disc:0},
+  {id:30, name:'HV Ammo x50',        cat:'ammo',         price:18,  old:null, icon:'🎆', disc:0},
+  {id:31, name:'Explosive Ammo x25', cat:'ammo',         price:22,  old:null, icon:'🧨', disc:0},
+  {id:32, name:'Dragon VIP',         cat:'privileges',   price:199, old:null, icon:'🐉', disc:0},
+  {id:33, name:'Elite VIP',          cat:'privileges',   price:299, old:null, icon:'👑', disc:0},
+];
+
+let currentFilter='all', currentSearch='';
+
+function renderGrid(items){
+  const g=document.getElementById('itemGrid');
+  g.innerHTML=items.map((item,i)=>`
+    <div class="icard" style="animation-delay:${(i%8)*0.05+0.03}s" data-cat="${item.cat}">
+      <div class="img-wrap">
+        ${item.disc?`<div class="disc-badge">-${item.disc}%</div>`:''}
+        <div class="i-icon">${item.icon}</div>
+        <div class="buy-overlay">
+          <button class="buy-btn" onclick="addCart(event,'${item.name}')">BUY NOW</button>
+        </div>
+      </div>
+      <div class="iinfo">
+        <div class="iname">${item.name}</div>
+        <div class="iprice">
+          ${item.old?`<span class="pold">${item.old} RUB</span><span class="pnew">${item.price} RUB</span>`:`<span class="ponly">${item.price} RUB</span>`}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterItems(cat,btn){
+  currentFilter=cat;
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  applyFilters();
+}
+
+function handleSearch(v){
+  currentSearch=v.toLowerCase();
+  applyFilters();
+}
+
+function applyFilters(){
+  let f=ITEMS;
+  if(currentFilter!=='all') f=f.filter(i=>i.cat===currentFilter);
+  if(currentSearch) f=f.filter(i=>i.name.toLowerCase().includes(currentSearch));
+  renderGrid(f);
+}
+
+function addCart(e,name){
+  e.stopPropagation();
+  const b=e.target;
+  b.textContent='✓ ADDED';
+  b.style.background='linear-gradient(135deg,#00c853,#00e676)';
+  b.style.color='#000';
+  setTimeout(()=>{b.textContent='BUY NOW';b.style.background='';b.style.color='';},1500);
+}
+
+renderGrid(ITEMS);
+</script>
+</body>
+</html>
